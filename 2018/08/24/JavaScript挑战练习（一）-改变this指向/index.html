@@ -83,15 +83,18 @@
 
 
 
+<meta name="description" content="一.this指向的详解概括：this的指向到底是指向哪里？通常来说，只有当函数执行的时候才可以确定this指向的到底是谁，简单的也可以这么说：this最终指向的是那个调用它的对象。 常见的一般有以下几种情况：第一种：在一个函数中有this，但是函数没有被上一级对象所调用，所以此时的this指向的是window（注意在严格模式下则不是），如以下代码： function blue() {     v">
 <meta name="keywords" content="JavaScript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JavaScript挑战练习（一）-改变this指向">
 <meta property="og:url" content="http://hqblog.top/2018/08/24/JavaScript挑战练习（一）-改变this指向/index.html">
 <meta property="og:site_name" content="蓝源博客">
+<meta property="og:description" content="一.this指向的详解概括：this的指向到底是指向哪里？通常来说，只有当函数执行的时候才可以确定this指向的到底是谁，简单的也可以这么说：this最终指向的是那个调用它的对象。 常见的一般有以下几种情况：第一种：在一个函数中有this，但是函数没有被上一级对象所调用，所以此时的this指向的是window（注意在严格模式下则不是），如以下代码： function blue() {     v">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-08-24T01:50:56.913Z">
+<meta property="og:updated_time" content="2018-08-25T08:24:53.877Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="JavaScript挑战练习（一）-改变this指向">
+<meta name="twitter:description" content="一.this指向的详解概括：this的指向到底是指向哪里？通常来说，只有当函数执行的时候才可以确定this指向的到底是谁，简单的也可以这么说：this最终指向的是那个调用它的对象。 常见的一般有以下几种情况：第一种：在一个函数中有this，但是函数没有被上一级对象所调用，所以此时的this指向的是window（注意在严格模式下则不是），如以下代码： function blue() {     v">
 
 
 
@@ -381,7 +384,116 @@
       
 
       
-        
+        <a id="more"></a>
+<h1 id="一-this指向的详解"><a href="#一-this指向的详解" class="headerlink" title="一.this指向的详解"></a>一.this指向的详解</h1><p><strong>概括</strong>：this的指向到底是指向哪里？通常来说，只有当函数执行的时候才可以确定this指向的到底是谁，简单的也可以这么说：this最终指向的是那个调用它的对象。</p>
+<h2 id="常见的一般有以下几种情况："><a href="#常见的一般有以下几种情况：" class="headerlink" title="常见的一般有以下几种情况："></a>常见的一般有以下几种情况：</h2><p><strong>第一种</strong>：在一个函数中有this，但是函数没有被上一级对象所调用，所以此时的this指向的是window（注意在严格模式下则不是），如以下代码：</p>
+<pre><code>function blue() {
+    var blue = &quot;蓝源&quot;;
+    console.log(this.blue);//undefind
+    console.log(this);//window
+}
+blue();//this指向调用它的那个对象，在这里相当于window
+</code></pre><p><strong>第二种</strong>：在函数中有一个this，而且该函数被上一级对象所调用，所以此时的this指向的是调用该函数的上一级对象，如以下代码：</p>
+<pre><code>    var o = {
+        name: &quot;blue&quot;,
+        fn: function(){
+            console.log(this.name);//blue
+            console.log(this);//指向o对象
+        }
+    }
+o.fn();//此时this指向的是调用函数的对象o。
+</code></pre><p><strong>第三种</strong>：有一个函数中有this，函数中有多个对象，尽管这个函数是被最外层的对象调用，但是其中的this指向的只是它的上一级对象，如以下代码：</p>
+<pre><code>var o = {
+    name: &quot;blue&quot;,
+    a: {
+        fn: function(){
+            console.log(this.name);//undefind，这里有两个对象o和a,调用的时候都指向上一层对象a，这里找不到声明的name
+        }
+    },
+    fn1: function(){
+        console.log(this.name);//blue
+    }
+}
+o.fn1();
+o.a.fn();
+</code></pre><p><strong>第四种（特殊情况）</strong>：如果函数中有return，而且return返回的是一个对象，那么调用时候的this指向不再是指向调用这个函数的实例了，而是指向这个函数返回的对象，如以下代码：</p>
+<pre><code>function fn()  
+{  
+    this.name = &apos;blue&apos;;  
+    return {};  
+}
+var a = new fn;  
+console.log(a.name); //undefined,这里指向的是return返回的对象，是一个空对象
+</code></pre><h1 id="改变this指向的方法"><a href="#改变this指向的方法" class="headerlink" title="改变this指向的方法"></a>改变this指向的方法</h1><p><strong>第一种：</strong>使用<code>call()</code></p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(){
+        console.log(this.user); //blue
+    }
+}
+var b = a.fn;
+b.call(a);  //若不用call，则b()执行后this指的是Window对象
+</code></pre><p>call方法除了第一个参数以外还可以添加多个参数，如下：</p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(c,d){
+        console.log(this.user); //blue
+        console.log(e+ee); //3
+    }
+}
+var b = a.fn;
+b.call(a,1,2);
+</code></pre><p><strong>第二种：</strong>使用<code>apply()</code></p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(){
+        console.log(this.user); //blue
+    }
+}
+var b = a.fn;
+b.apply(a);
+</code></pre><p>apply方法和call方法很类似，也可以接收多个参数，但是第二个参数必须是数组，如下：</p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(e,ee){
+        console.log(this.user); //blue
+        console.log(c+d); //11
+    }
+}
+var b = a.fn;
+b.apply(a,[10,1]);
+</code></pre><p><strong>第三种</strong>：使用<code>bind()</code><br>bind和call，apply的使用方法有些不同，如果我们还是按照上面的方法写代码，会发现一些问题，如下：</p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(){
+        console.log(this.user);
+    }
+}
+var b = a.fn;
+b.bind(a);  //代码没有被打印
+</code></pre><p>为什么代码没有被打印呢？这就是不同的地方所在，实际上执行bind之后返回的是一个函数，想下面这样写才是正确的：</p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(){
+        console.log(this.user); //blue
+    }
+}
+var b = a.fn;
+var c = b.bind(a);
+c();
+</code></pre><p>bind()方法也可以接收多个参数，并且参数可以执行的时候再次添加，但是要注意的是，参数是按照形参的顺序进行的，如下：</p>
+<pre><code>var a = {
+    user:&quot;blue&quot;,
+    fn:function(e,d,f){
+        console.log(this.user); //blue
+        console.log(e,d,f); //10 1 2
+    }
+}
+var b = a.fn;
+var c = b.bind(a,10);
+c(1,2);
+</code></pre><h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><p>call(),apply()以及bind()方法都可以改变this指向，只是所使用的场景有点不一样，bind()改变后的函数想什么时候调用就什么时候调用，call和apply都是改变指向后立即调用此方法。</p>
+
       
     </div>
     
@@ -474,8 +586,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -526,6 +647,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-this指向的详解"><span class="nav-number">1.</span> <span class="nav-text">一.this指向的详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#常见的一般有以下几种情况："><span class="nav-number">1.1.</span> <span class="nav-text">常见的一般有以下几种情况：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#改变this指向的方法"><span class="nav-number">2.</span> <span class="nav-text">改变this指向的方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结："><span class="nav-number">3.</span> <span class="nav-text">总结：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
